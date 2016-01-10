@@ -1,0 +1,20 @@
+{
+  "name": "react-redux-boilerplate",
+  "version": "0.0.0",
+  "description": "",
+  "author": "chielkunkels",
+  "license": "MIT",
+  "homepage": "https://github.com/chielkunkels/react-redux-boilerplate#readme",
+  "bugs": {
+    "url": "https://github.com/chielkunkels/react-redux-boilerplate/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chielkunkels/react-redux-boilerplate.git"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "react-router"
+  ]
+}
