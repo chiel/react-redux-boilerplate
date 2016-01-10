@@ -19,6 +19,7 @@ export default function renderFullPage(html) {
 	</head>
 	<body>
 		<div id="app-root">${html}</div>
+		<script src="/js/app.js"></script>
 	</body>
 </html>`
 	);

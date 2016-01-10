@@ -7,7 +7,10 @@ const c     = gutil.colors;
 gulp.task('babel', () => {
 	const babel = require('gulp-babel');
 	const del   = require('del');
-	const src   = 'src/**/*.{js,jsx}';
+	const src   = [
+		'src/**/*.{js,jsx}',
+		'!src/client/*.{js,jsx}'
+	];
 
 	const run = (e, path) => {
 		let runSrc = src;

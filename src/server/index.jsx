@@ -7,6 +7,8 @@ import React              from 'react';
 import { renderToString } from 'react-dom/server';
 
 const app = express();
+app.use(require('compression')());
+app.use(require('serve-static')(__dirname + '/../public'));
 
 app.get('/', (req, res, next) => {
 	res.send(renderFullPage(renderToString(
