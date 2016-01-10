@@ -1,0 +1,25 @@
+'use strict';
+
+/**
+ * Render given html string into full page markup
+ *
+ * @param {String} html
+ *
+ * @return String
+ */
+export default function renderFullPage(html) {
+	return (
+`<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>React + Redux boilerplate</title>
+	</head>
+	<body>
+		<div id="app-root">${html}</div>
+	</body>
+</html>`
+	);
+}

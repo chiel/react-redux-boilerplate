@@ -1,6 +1,7 @@
 'use strict';
 
 import App                from 'app/components/App';
+import renderFullPage     from 'app/utils/renderFullPage';
 import express            from 'express';
 import React              from 'react';
 import { renderToString } from 'react-dom/server';
@@ -8,9 +9,9 @@ import { renderToString } from 'react-dom/server';
 const app = express();
 
 app.get('/', (req, res, next) => {
-	res.send(renderToString(
+	res.send(renderFullPage(renderToString(
 		<App />
-	));
+	)));
 });
 
 const port = process.env.PORT || 4589;
