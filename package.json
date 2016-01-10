@@ -18,14 +18,18 @@
     "react-router"
   ],
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "react": "^0.14.6",
+    "react-dom": "^0.14.6"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
     "del": "^2.2.0",
     "globby": "^4.0.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.1",
+    "gulp-symlink": "^2.1.3",
     "gulp-util": "^3.0.7",
     "nodemon": "^1.8.1"
   }
