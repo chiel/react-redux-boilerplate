@@ -8,6 +8,16 @@ const gulp = require('gulp');
 gulp.task('symlink', [ 'babel' ], () => {
 	const symlink = require('gulp-symlink');
 
-	return gulp.src('dist/app')
+	const appStream = gulp.src('dist/app')
 		.pipe(symlink('node_modules/app', { force: true }));
+
+	const modStream = gulp.src('dist/modules/*')
+		.pipe(symlink(file => (
+			new symlink.File({
+				path: `dist/app/${file.relative}`,
+				cwd: process.cwd()
+			})
+		), { force: true }));
+
+	return require('merge-stream')(appStream, modStream);
 });

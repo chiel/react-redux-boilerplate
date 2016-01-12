@@ -22,15 +22,40 @@ gulp.task('scripts', () => {
 	// expose app modules
 	exposeDir(appBundler, './src/app', 'app');
 
+	// this will hold all bundlers and their outputs
+	let bundlers  = [ appBundler ];
+	const outputs = [ 'app.js' ];
+
+	// create bundlers for each module, excluding modules found in the app bundler
+	// these don't have entry points since the files are just `require()`d
+	const inputs = require('globby').sync('./src/modules/*');
+	let moduleBundler, moduleName;
+	inputs.forEach(input => {
+		moduleName = input.match(/\/([^\/]+)$/)[1];
+
+		moduleBundler = browserify(bundleOpts).external(appBundler);
+		exposeDir(moduleBundler, input, `app/${moduleName}`);
+
+		bundlers.push(moduleBundler);
+		outputs.push(`${moduleName}.js`);
+	});
+
 	// wrap the app bundle with watchify in dev mode
 	if (gutil.env.dev) {
 		gutil.log(`${c.cyan('scripts')}: watching`);
 
-		appBundler = require('watchify')(appBundler);
-		appBundler.on('update', files => run(appBundler, 'app.js', files));
+		bundlers = bundlers.map((bundler, index) => {
+			bundler = require('watchify')(bundler);
+			bundler.on('update', files => {
+				run(bundler, outputs[index], files);
+			});
+			return bundler;
+		});
 	}
 
-	return run(appBundler, 'app.js');
+	return require('merge-stream')(
+		bundlers.map((bundle, index) => run(bundle, outputs[index]))
+	);
 });
 
 /**

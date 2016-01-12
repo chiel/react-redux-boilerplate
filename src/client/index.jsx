@@ -5,8 +5,14 @@ import App                  from 'app/components/App';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import React                from 'react';
 import ReactDOM             from 'react-dom';
-import { Router }           from 'react-router';
+import { match, Router }    from 'react-router';
 
-ReactDOM.render((
-	<Router routes={routes} history={createBrowserHistory()} />
-), document.getElementById('app-root'));
+const history = createBrowserHistory();
+
+history.listen(location => {
+	match({ routes, location: location.pathname }, (err, redirectLocation, renderProps) => {
+		ReactDOM.render((
+			<Router routes={routes} history={history} />
+		), document.getElementById('app-root'));
+	});
+})();
