@@ -4,11 +4,12 @@
  * Render given html string into full page markup
  *
  * @param {String} html
+ * @param {Object} initialState
  * @param {String[]} styleSheets
  *
  * @return {String}
  */
-export default function renderFullPage(html, styleSheets) {
+export default function renderFullPage(html, initialState, styleSheets) {
 	styleSheets = styleSheets.map(sheet => (
 		`<link rel="stylesheet" href="${sheet}">`
 	));
@@ -26,6 +27,7 @@ export default function renderFullPage(html, styleSheets) {
 	</head>
 	<body>
 		<div id="app-root">${html}</div>
+		<script>window.__initialState = ${JSON.stringify(initialState)};</script>
 		<script src="/js/app.js"></script>
 	</body>
 </html>`
