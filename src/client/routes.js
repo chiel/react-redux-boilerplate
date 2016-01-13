@@ -2,6 +2,7 @@
 
 import bundles from 'app/bundles';
 import App     from 'app/components/App';
+import loadCSS from 'fg-loadcss';
 import loadJS  from 'fg-loadjs';
 
 const routes = [
@@ -26,6 +27,24 @@ function getChildRoutes(location, cb) {
 
 	if (loaded.indexOf(bundle) !== -1) {
 		return cb(null, require(`app/${bundle}/routes`).default);
+	}
+
+	if (bundles[bundle].styles) {
+		const sheets = document.styleSheets;
+		let found = false;
+
+		for (let i = 0; i < sheets.length; i++) {
+			if (!sheets[i].href) continue;
+
+			if (new RegExp(`\/css\/${bundle}\.css`).test(sheets[i].href)) {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			loadCSS(`/css/${bundle}.css`);
+		}
 	}
 
 	loadJS(`/js/${bundle}.js`, function() {

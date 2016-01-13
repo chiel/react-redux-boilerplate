@@ -1,6 +1,7 @@
 'use strict';
 
 import routes             from './routes';
+import bundles            from 'app/bundles';
 import App                from 'app/components/App';
 import renderFullPage     from 'app/utils/renderFullPage';
 import express            from 'express';
@@ -14,6 +15,16 @@ app.use(require('compression')());
 app.use(require('serve-static')(__dirname + '/../public'));
 
 app.get('*', (req, res, next) => {
+	let bundle = req.path.replace(/^[\/\s]+/, '').split('/')[0];
+	if (bundles[bundle] && bundles[bundle].partOf) {
+		bundle = bundles[bundle].partOf;
+	}
+
+	const styleSheets = [];
+	if (bundles[bundle] && bundles[bundle].styles) {
+		styleSheets.push(`/css/${bundle}.css`);
+	}
+
 	match({ routes, location: req.url }, (err, redirectLocation, renderProps) => {
 		if (err) {
 			return next(err);
@@ -25,7 +36,7 @@ app.get('*', (req, res, next) => {
 
 		res.send(renderFullPage(renderToString(
 			<RoutingContext { ...renderProps } />
-		)));
+		), styleSheets));
 	});
 });
 

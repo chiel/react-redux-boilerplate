@@ -5,15 +5,20 @@ const gutil = require('gulp-util');
 const c     = gutil.colors;
 
 gulp.task('styles', () => {
-	const src = 'src/client/styles/*.scss';
+	const src = [
+		'src/client/styles/index.scss',
+		'src/modules/*/styles/index.scss'
+	];
 
 	if (gutil.env.dev) {
 		gutil.log(`${c.cyan('styles')}: watching`);
 
-		gulp.watch([
-			'src/client/styles/*.scss',
-			'src/client/styles/**/*.scss'
-		], e => run(src, e));
+		require('globby').sync(src).forEach(src => {
+			gulp.watch([
+				src.replace(/([^\/]+)\.scss$/, '*.scss'),
+				src.replace(/([^\/]+)\.scss$/, '**/*.scss')
+			], e => run(src, e));
+		});
 	}
 
 	return run(src);
@@ -28,7 +33,7 @@ function run(src, e) {
 		gutil.log(`${c.cyan('styles')}: processing`);
 	}
 
-	return gulp.src(src)
+	return gulp.src(src, { base: 'src' })
 		.pipe(sourcemaps.init())
 		.pipe(require('gulp-sass')())
 		.pipe(require('gulp-autoprefixer')({
@@ -36,6 +41,11 @@ function run(src, e) {
 		}))
 		.pipe(gutil.env.dev ? gutil.noop() : require('gulp-cssnano')({
 			zindex: false
+		}))
+		.pipe(require('gulp-rename')(path => {
+			const m = path.dirname.match(/^modules\/([^\/]+)/);
+			path.basename = m ? m[1] : 'app';
+			path.dirname  = '';
 		}))
 		.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('dist/public/css'));
