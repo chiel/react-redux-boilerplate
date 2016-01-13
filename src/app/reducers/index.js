@@ -3,7 +3,11 @@
 import { session }         from 'app/reducers/session';
 import { combineReducers } from 'redux';
 
-const reducers = { session };
+let reducers = { session };
+
+export function addReducers(newReducers) {
+	reducers = { ...reducers, ...newReducers };
+}
 
 export default function createReducer() {
 	return combineReducers(reducers);

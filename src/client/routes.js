@@ -1,9 +1,11 @@
 'use strict';
 
-import bundles from 'app/bundles';
-import App     from 'app/components/App';
-import loadCSS from 'fg-loadcss';
-import loadJS  from 'fg-loadjs';
+import bundles          from 'app/bundles';
+import App              from 'app/components/App';
+import createReducer, {
+         addReducers }  from 'app/reducers';
+import loadCSS          from 'fg-loadcss';
+import loadJS           from 'fg-loadjs';
 
 const routes = [
 	{
@@ -49,6 +51,11 @@ function getChildRoutes(location, cb) {
 
 	loadJS(`/js/${bundle}.js`, function() {
 		loaded.push(bundle);
+
+		if (bundles[bundle].reducers) {
+			addReducers(require(`app/${bundle}/reducers`));
+			require('app/store').default.replaceReducer(createReducer());
+		}
 		cb(null, require(`app/${bundle}/routes`).default);
 	});
 }

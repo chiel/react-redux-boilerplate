@@ -1,17 +1,18 @@
 'use strict';
 
-import routes             from './routes';
-import bundles            from 'app/bundles';
-import App                from 'app/components/App';
-import createReducer      from 'app/reducers';
-import renderFullPage     from 'app/utils/renderFullPage';
-import express            from 'express';
-import React              from 'react';
-import { renderToString } from 'react-dom/server';
-import { Provider }       from 'react-redux';
+import routes               from './routes';
+import bundles              from 'app/bundles';
+import App                  from 'app/components/App';
+import * as sessionReducers from 'app/reducers/session';
+import renderFullPage       from 'app/utils/renderFullPage';
+import express              from 'express';
+import React                from 'react';
+import { renderToString }   from 'react-dom/server';
+import { Provider }         from 'react-redux';
 import { match,
-         RoutingContext } from 'react-router';
-import { createStore }    from 'redux';
+         RoutingContext }   from 'react-router';
+import { combineReducers,
+         createStore }      from 'redux';
 
 const app = express();
 app.use(require('compression')());
@@ -23,12 +24,20 @@ app.get('*', (req, res, next) => {
 		bundle = bundles[bundle].partOf;
 	}
 
+	let reducers = { ...sessionReducers };
+
 	const styleSheets = [];
-	if (bundles[bundle] && bundles[bundle].styles) {
-		styleSheets.push(`/css/${bundle}.css`);
+	if (bundles[bundle]) {
+		if (bundles[bundle].styles) {
+			styleSheets.push(`/css/${bundle}.css`);
+		}
+
+		if (bundles[bundle].reducers) {
+			reducers = { ...reducers, ...require(`app/${bundle}/reducers`) };
+		}
 	}
 
-	const store = createStore(createReducer());
+	const store = createStore(combineReducers(reducers));
 
 	match({ routes, location: req.url }, (err, redirectLocation, renderProps) => {
 		if (err) {
