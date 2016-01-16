@@ -20,6 +20,7 @@
   "dependencies": {
     "babel-preset-stage-1": "^6.3.13",
     "compression": "^1.6.0",
+    "cookie-parser": "^1.4.1",
     "express": "^4.13.3",
     "fg-loadcss": "^0.2.4",
     "fg-loadjs": "^0.2.3",

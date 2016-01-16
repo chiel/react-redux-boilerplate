@@ -4,6 +4,9 @@ import routes               from './routes';
 import bundles              from 'app/bundles';
 import App                  from 'app/components/App';
 import * as sessionReducers from 'app/reducers/session';
+import createApiCaller      from 'app/utils/createApiCaller';
+import createApiMiddleware  from 'app/utils/createApiMiddleware';
+import createCustomStore    from 'app/utils/createCustomStore';
 import renderFullPage       from 'app/utils/renderFullPage';
 import express              from 'express';
 import React                from 'react';
@@ -11,12 +14,12 @@ import { renderToString }   from 'react-dom/server';
 import { Provider }         from 'react-redux';
 import { match,
          RoutingContext }   from 'react-router';
-import { combineReducers,
-         createStore }      from 'redux';
+import { combineReducers }  from 'redux';
 
 const app = express();
 app.use(require('compression')());
 app.use(require('serve-static')(__dirname + '/../public'));
+app.use(require('cookie-parser')());
 
 app.get('*', (req, res, next) => {
 	let bundle = req.path.replace(/^[\/\s]+/, '').split('/')[0];
@@ -37,7 +40,10 @@ app.get('*', (req, res, next) => {
 		}
 	}
 
-	const store = createStore(combineReducers(reducers));
+	const store = createCustomStore(
+		combineReducers(reducers),
+		[ createApiMiddleware(createApiCaller(req.cookies.api_token)) ]
+	);
 
 	match({ routes, location: req.url }, (err, redirectLocation, renderProps) => {
 		if (err) {
