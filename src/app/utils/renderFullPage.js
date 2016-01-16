@@ -14,6 +14,10 @@ export default function renderFullPage(html, initialState, styleSheets) {
 		`<link rel="stylesheet" href="${sheet}">`
 	));
 
+	const config = {
+		API_URL: process.env.API_URL
+	};
+
 	return (
 `<!doctype html>
 <html lang="en">
@@ -27,6 +31,7 @@ export default function renderFullPage(html, initialState, styleSheets) {
 	</head>
 	<body>
 		<div id="app-root">${html}</div>
+		<script>window.__config = ${JSON.stringify(config)}</script>
 		<script>window.__initialState = ${JSON.stringify(initialState)};</script>
 		<script src="/js/app.js"></script>
 	</body>
