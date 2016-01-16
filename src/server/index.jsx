@@ -48,11 +48,25 @@ app.get('*', (req, res, next) => {
 			return res.redirect(302, redirectLocation.pathname + redirectLocation.search);
 		}
 
-		res.send(renderFullPage(renderToString(
-			<Provider store={store}>
-				<RoutingContext { ...renderProps } />
-			</Provider>
-		), store.getState(), styleSheets));
+		const render = () => (
+			res.send(renderFullPage(renderToString(
+				<Provider store={store}>
+					<RoutingContext { ...renderProps } />
+				</Provider>
+			), store.getState(), styleSheets))
+		);
+
+		const promises = renderProps.components
+			.filter(component => component && !!component.fetchData)
+			.map(component => component.fetchData(renderProps, store.dispatch));
+
+		if (!promises.length) {
+			return render();
+		}
+
+		Promise.all(promises)
+			.then(render)
+			.catch(next);
 	});
 });
 
