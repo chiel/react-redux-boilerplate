@@ -10,7 +10,9 @@ const c     = gutil.colors;
 gulp.task('images', function() {
 	const src = [
 		'src/client/images/*.{gif,jpg,png,svg}',
-		'src/client/images/**/*.{gif,jpg,png,svg}'
+		'src/client/images/**/*.{gif,jpg,png,svg}',
+		'src/modules/*/images/*.{gif,jpg,png,svg}',
+		'src/modules/*/images/**/*.{gif,jpg,png,svg}'
 	];
 
 	if (gutil.env.dev) {
@@ -31,7 +33,10 @@ function run(src, e) {
 
 	return gulp.src(src, { base: 'src' })
 		.pipe(require('gulp-rename')(path => {
-			path.dirname = path.dirname.replace('client/images', 'app');
+			const m = path.dirname.match(/^modules\/([^\/]+)/);
+			path.dirname = m ?
+				path.dirname.replace(`${m[0]}/images`, m[1]) :
+				path.dirname.replace('client/images', 'app');
 		}))
 		.pipe(require('gulp-imagemin')())
 		.pipe(gulp.dest('dist/public/img'));
