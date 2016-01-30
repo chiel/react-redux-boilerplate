@@ -9,6 +9,7 @@ import createApiMiddleware  from 'app/utils/createApiMiddleware';
 import createCustomStore    from 'app/utils/createCustomStore';
 import renderFullPage       from 'app/utils/renderFullPage';
 import express              from 'express';
+import createMemoryHistory  from 'history/lib/createMemoryHistory';
 import React                from 'react';
 import { renderToString }   from 'react-dom/server';
 import { Provider }         from 'react-redux';
@@ -40,12 +41,14 @@ app.get('*', (req, res, next) => {
 		}
 	}
 
+	const history = createMemoryHistory();
+
 	const store = createCustomStore(
 		combineReducers(reducers),
-		[ createApiMiddleware(createApiCaller(req.cookies.api_token)) ]
+		[ createApiMiddleware(createApiCaller(req.cookies.api_token), history) ]
 	);
 
-	match({ routes, location: req.url }, (err, redirectLocation, renderProps) => {
+	match({ routes, location: req.url, history }, (err, redirectLocation, renderProps) => {
 		if (err) {
 			return next(err);
 		}
