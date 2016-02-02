@@ -18,6 +18,15 @@ export default function renderFullPage(html, initialState, styleSheets) {
 		API_URL: process.env.API_URL
 	};
 
+	const analytics = !process.env.GOOGLE_ANALYTICS ? '' : `<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', '${process.env.GOOGLE_ANALYTICS}', 'auto');
+ga('send', 'pageview');
+</script>`;
+
 	return (
 `<!doctype html>
 <html lang="en">
@@ -34,6 +43,7 @@ export default function renderFullPage(html, initialState, styleSheets) {
 		<script>window.__config = ${JSON.stringify(config)}</script>
 		<script>window.__initialState = ${JSON.stringify(initialState)};</script>
 		<script src="/js/app.js"></script>
+		${analytics}
 	</body>
 </html>`
 	);
